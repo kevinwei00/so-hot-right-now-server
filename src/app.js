@@ -9,6 +9,7 @@ const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
 const validateBearerToken = require('./validateBearerToken');
 const errorHandler = require('./errorHandler');
+const indeedAPI = require('./indeedAPI');
 
 /*******************************************************************
   INIT
@@ -21,14 +22,17 @@ const app = express();
 app.use(morgan(NODE_ENV === 'production' ? 'tiny' : 'common'));
 app.use(cors());
 app.use(helmet());
-//app.use(express.json()); //parses JSON data of req body
+app.use(express.json()); //parses JSON data of req body
 app.use(validateBearerToken);
 
 /*******************************************************************
   ROUTES
 *******************************************************************/
-app.get('/', (req, res) => {
-  return res.send('Hello, world!');
+app.post('/', (req, res) => {
+  const { keywordsArray, useAnd } = req.body;
+  indeedAPI.GetNumJobListingsFor(keywordsArray, useAnd).then((totalResults) => {
+    return res.status(200).json(totalResults);
+  });
 });
 
 /*******************************************************************
