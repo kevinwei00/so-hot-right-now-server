@@ -31,6 +31,9 @@ app.use(validateBearerToken);
 app.post('/', (req, res) => {
   const { keywordsArray, useAnd } = req.body;
   indeedAPI.GetNumJobListingsFor(keywordsArray, useAnd).then((totalResults) => {
+    if (totalResults === undefined) {
+      return res.status(400).json(-1);
+    }
     return res.status(200).json(totalResults);
   });
 });
