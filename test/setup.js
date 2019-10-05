@@ -1,5 +1,5 @@
-const { expect } = require('chai');
+const chai = require('chai');
 const supertest = require('supertest');
 
-global.expect = expect;
-global.supertest = supertest;
+global.chai = chai;
+global.supertest = supertest;s
