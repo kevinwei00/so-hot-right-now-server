@@ -4,7 +4,7 @@ const ENDPOINT = 'https://api.indeed.com/ads/apisearch';
 const PUBLISHER_ID = `publisher=${INDEED_PUBLISHER_ID}`;
 const PARAMS = 'v=2&limit=0&format=json';
 const BASE_QUERY = 'q=title%3A%28developer+OR+engineer%29';
-const logger = require('./logger');
+const logger = require('./bin/logger');
 
 function GetNumJobListingsFor(keywordsArray, useAnd) {
   const queryString = composeQueryString(keywordsArray, useAnd);

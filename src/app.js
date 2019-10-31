@@ -7,8 +7,8 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
-const validateBearerToken = require('./validateBearerToken');
-const errorHandler = require('./errorHandler');
+const validateBearerToken = require('./bin/validateBearerToken');
+const errorHandler = require('./bin/errorHandler');
 const indeedAPI = require('./indeedAPI');
 
 /*******************************************************************
@@ -19,7 +19,11 @@ const app = express();
 /*******************************************************************
   MIDDLEWARE
 *******************************************************************/
-app.use(morgan(NODE_ENV === 'production' ? 'tiny' : 'common'));
+app.use(
+  morgan(NODE_ENV === 'production' ? 'tiny' : 'common', {
+    skip: () => NODE_ENV === 'test',
+  })
+);
 app.use(cors());
 app.use(helmet());
 app.use(express.json()); //parses JSON data of req body
