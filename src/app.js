@@ -9,7 +9,6 @@ const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
 const validateBearerToken = require('./bin/validateBearerToken');
 const errorHandler = require('./bin/errorHandler');
-const indeedAPI = require('./indeedAPI');
 const APIRouter = require('./api/api-router');
 
 /*******************************************************************
@@ -27,22 +26,11 @@ app.use(
 );
 app.use(cors());
 app.use(helmet());
-app.use(express.json()); //parses JSON data of req body
 app.use(validateBearerToken);
 
 /*******************************************************************
   ROUTES
 *******************************************************************/
-app.post('/', (req, res) => {
-  const { keywordsArray, useAnd } = req.body;
-  indeedAPI.GetNumJobListingsFor(keywordsArray, useAnd).then((totalResults) => {
-    if (totalResults === undefined) {
-      return res.status(400).json(-1);
-    }
-    return res.status(200).json(totalResults);
-  });
-});
-
 app.use('/api', APIRouter);
 
 /*******************************************************************
