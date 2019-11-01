@@ -3,7 +3,7 @@ const axios = require('axios');
 const APIService = require('./api-service');
 const APIRouter = express.Router();
 const { INDEED_PUBLISHER_ID } = require('../config');
-const ENDPOINT = 'https://api.indeed.com/ads/apisearch';
+const INDEED_API_ENDPOINT = 'https://api.indeed.com/ads/apisearch';
 const PUBLISHER_ID = `publisher=${INDEED_PUBLISHER_ID}`;
 const PARAMS = 'v=2&limit=0&format=json';
 const BASE_QUERY = 'q=title%3A%28developer+OR+engineer%29';
@@ -72,8 +72,10 @@ APIRouter.route('/search').get((req, res, next) => {
       error: 'Parameter useAnd must be either true or false',
     });
   }
+  // keywords string to array
   keywords = keywords.split(',');
-  useAnd = (useAnd === 'true');
+  // useAnd string to boolean
+  useAnd = useAnd === 'true';
   const queryString = composeQueryString(keywords, useAnd);
   const url = composeURL(queryString);
   return axios
@@ -120,7 +122,7 @@ function composeQueryString(keywords, useAnd) {
 }
 
 function composeURL(queryString) {
-  return `${ENDPOINT}?${PUBLISHER_ID}&${PARAMS}&${BASE_QUERY}+${queryString}`;
+  return `${INDEED_API_ENDPOINT}?${PUBLISHER_ID}&${PARAMS}&${BASE_QUERY}+${queryString}`;
 }
 
 module.exports = APIRouter;
