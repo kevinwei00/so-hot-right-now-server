@@ -10,6 +10,7 @@ const { NODE_ENV } = require('./config');
 const validateBearerToken = require('./bin/validateBearerToken');
 const errorHandler = require('./bin/errorHandler');
 const indeedAPI = require('./indeedAPI');
+const APIRouter = require('./api/api-router');
 
 /*******************************************************************
   INIT
@@ -41,6 +42,8 @@ app.post('/', (req, res) => {
     return res.status(200).json(totalResults);
   });
 });
+
+app.use('/api', APIRouter);
 
 /*******************************************************************
   ERROR HANDLING

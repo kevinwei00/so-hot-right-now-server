@@ -10,6 +10,7 @@
     "migrate": "postgrator --config postgrator-config.js",
     "migrate:test": "env NODE_ENV=test npm run migrate",
     "migrate:production": "env SSL=true DATABASE_URL=$(heroku config:get DATABASE_URL) npm run migrate",
+    "seed": "psql -U Kein -f ./seeds/seed.all_tables.sql so-hot-right-now",
     "predeploy": "npm audit && npm run migrate:production",
     "deploy": "git push heroku master"
   },
