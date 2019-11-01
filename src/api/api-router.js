@@ -90,6 +90,13 @@ APIRouter.route('/search').get((req, res, next) => {
     .catch(next);
 });
 
+// returns logo for specified tool
+APIRouter.route('/logos/:tool_id').get((req, res) => {
+  return res
+    .status(200)
+    .sendFile(`/logos/${req.params.tool_id}.png`, { root: process.cwd() });
+});
+
 /*******************************************************************************
   FUNCTIONS
 ********************************************************************************/
