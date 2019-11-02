@@ -1,5 +1,6 @@
 const express = require('express');
 const axios = require('axios');
+const requireAuth = require('../bin/validateBearerToken');
 const APIService = require('./api-service');
 const APIRouter = express.Router();
 const { INDEED_PUBLISHER_ID } = require('../config');
@@ -13,16 +14,19 @@ const BASE_QUERY = 'q=title%3A%28developer+OR+engineer%29';
 ********************************************************************************/
 
 // returns all categories
-APIRouter.route('/categories').get((req, res, next) => {
-  APIService.getAllCategories(req.app.get('db'))
-    .then((categories) => {
-      return res.json(categories);
-    })
-    .catch(next);
-});
+APIRouter.route('/categories')
+  .all(requireAuth)
+  .get((req, res, next) => {
+    APIService.getAllCategories(req.app.get('db'))
+      .then((categories) => {
+        return res.json(categories);
+      })
+      .catch(next);
+  });
 
 // returns specified category
 APIRouter.route('/categories/:category_id')
+  .all(requireAuth)
   .all(checkCategoryExists)
   .get((req, res) => {
     return res.json(res.category);
@@ -30,6 +34,7 @@ APIRouter.route('/categories/:category_id')
 
 // returns all tools for specified category
 APIRouter.route('/categories/:category_id/tools')
+  .all(requireAuth)
   .all(checkCategoryExists)
   .get((req, res, next) => {
     APIService.getAllToolsForCategory(req.app.get('db'), req.params.category_id)
@@ -41,6 +46,7 @@ APIRouter.route('/categories/:category_id/tools')
 
 // returns specified tool for specified category
 APIRouter.route('/categories/:category_id/tools/:tool_id')
+  .all(requireAuth)
   .all(checkCategoryExists)
   .get((req, res, next) => {
     APIService.getToolForCategory(
@@ -60,35 +66,37 @@ APIRouter.route('/categories/:category_id/tools/:tool_id')
   });
 
 // returns number of job listings matching the supplied keywords using the Indeed API
-APIRouter.route('/search').get((req, res, next) => {
-  let { keywords, useAnd } = req.query;
-  if (!keywords) {
-    return res.status(400).json({
-      error: 'Must supply parameter keywords',
-    });
-  }
-  if (useAnd && useAnd !== 'true' && useAnd !== 'false') {
-    return res.status(400).json({
-      error: 'Parameter useAnd must be either true or false',
-    });
-  }
-  // keywords string to array
-  keywords = keywords.split(',');
-  // useAnd string to boolean
-  useAnd = useAnd === 'true';
-  const queryString = composeQueryString(keywords, useAnd);
-  const url = composeURL(queryString);
-  return axios
-    .get(url)
-    .then((res) => res.data.totalResults)
-    .then((totalResults) => {
-      if (totalResults === undefined) {
-        return res.status(400).json(-1);
-      }
-      return res.status(200).json({ queryString, totalResults });
-    })
-    .catch(next);
-});
+APIRouter.route('/search')
+  .all(requireAuth)
+  .get((req, res, next) => {
+    let { keywords, useAnd } = req.query;
+    if (!keywords) {
+      return res.status(400).json({
+        error: 'Must supply parameter keywords',
+      });
+    }
+    if (useAnd && useAnd !== 'true' && useAnd !== 'false') {
+      return res.status(400).json({
+        error: 'Parameter useAnd must be either true or false',
+      });
+    }
+    // keywords string to array
+    keywords = keywords.split(',');
+    // useAnd string to boolean
+    useAnd = useAnd === 'true';
+    const queryString = composeQueryString(keywords, useAnd);
+    const url = composeURL(queryString);
+    return axios
+      .get(url)
+      .then((res) => res.data.totalResults)
+      .then((totalResults) => {
+        if (totalResults === undefined) {
+          return res.status(400).json(-1);
+        }
+        return res.status(200).json({ queryString, totalResults });
+      })
+      .catch(next);
+  });
 
 // returns logo for specified tool
 APIRouter.route('/logos/:tool_id').get((req, res) => {
