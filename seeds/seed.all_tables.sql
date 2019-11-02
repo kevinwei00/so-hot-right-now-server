@@ -126,7 +126,7 @@ VALUES
   ('yii', 'Yii', '{"yii"}', 'https://www.yiiframework.com', ''),
   ('zend', 'Zend Framework', '{"zend","zend framework"}', 'https://framework.zend.com', ''),
   ('clojure', 'Clojure', '{"clojure"}', 'https://clojure.org', ''),
-  ('csharp', 'C#', '{"c#",".net"}', 'https://docs.microsoft.com/en-us/dotnet/csharp', ''),
+  ('csharp', 'C#', '{"c%23","csharp",".net"}', 'https://docs.microsoft.com/en-us/dotnet/csharp', ''),
   ('ecmascript', 'ECMAScript', '{"es6","es7","es8","es9","es2015","es2016","es2017","es2018"}', 'https://www.ecma-international.org/publications/standards/Ecma-262.htm', ''),
   ('elixir', 'Elixir', '{"elixir"}', 'https://elixir-lang.org', ''),
   ('erlang', 'Erlang', '{"erlang"}', 'https://www.erlang.org', ''),
