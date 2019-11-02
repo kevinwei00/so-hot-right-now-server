@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const axios = require('axios');
 const requireAuth = require('../bin/validateBearerToken');
 const APIService = require('./api-service');
@@ -39,6 +40,7 @@ APIRouter.route('/categories/:category_id/tools')
   .get((req, res, next) => {
     APIService.getAllToolsForCategory(req.app.get('db'), req.params.category_id)
       .then((tools) => {
+        tools = tools.map((tool) => addLogoLink(tool, req, tool.logo));
         return res.json(tools);
       })
       .catch(next);
@@ -48,21 +50,20 @@ APIRouter.route('/categories/:category_id/tools')
 APIRouter.route('/categories/:category_id/tools/:tool_id')
   .all(requireAuth)
   .all(checkCategoryExists)
-  .get((req, res, next) => {
-    APIService.getToolForCategory(
-      req.app.get('db'),
-      req.params.category_id,
-      req.params.tool_id
-    )
-      .then((tool) => {
-        if (!tool) {
-          return res.status(404).json({
-            error: 'Tool does not exist',
-          });
-        }
-        return res.json(tool);
-      })
-      .catch(next);
+  .all(checkToolExists)
+  .get((req, res) => {
+    const tool = addLogoLink(res.tool, req);
+    return res.json(tool);
+  });
+
+// returns logo for specified tool of specified category
+APIRouter.route('/categories/:category_id/tools/:tool_id/logo')
+  .all(checkCategoryExists)
+  .all(checkToolExists)
+  .get((req, res) => {
+    return res
+      .status(200)
+      .sendFile(`/logos/${req.params.tool_id}.png`, { root: process.cwd() });
   });
 
 // returns number of job listings matching the supplied keywords using the Indeed API
@@ -98,13 +99,6 @@ APIRouter.route('/search')
       .catch(next);
   });
 
-// returns logo for specified tool
-APIRouter.route('/logos/:tool_id').get((req, res) => {
-  return res
-    .status(200)
-    .sendFile(`/logos/${req.params.tool_id}.png`, { root: process.cwd() });
-});
-
 /*******************************************************************************
   FUNCTIONS
 ********************************************************************************/
@@ -126,6 +120,35 @@ async function checkCategoryExists(req, res, next) {
   } catch (error) {
     next(error);
   }
+}
+
+async function checkToolExists(req, res, next) {
+  try {
+    const tool = await APIService.getToolForCategory(
+      req.app.get('db'),
+      req.params.category_id,
+      req.params.tool_id
+    );
+
+    if (!tool) {
+      return res.status(404).json({
+        error: 'Tool does not exist',
+      });
+    }
+
+    res.tool = tool;
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
+function addLogoLink(tool, req, tool_logo = '') {
+  const logo = `${req.protocol}://${req.get('host')}${path.posix.join(
+    `${req.originalUrl}/${tool_logo}/logo`
+  )}`;
+  tool.links = { logo };
+  return tool;
 }
 
 function composeQueryString(keywords, useAnd) {
