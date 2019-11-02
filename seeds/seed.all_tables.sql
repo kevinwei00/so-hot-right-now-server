@@ -167,7 +167,7 @@ VALUES
   ('ngrx', 'NgRx', '{"ngrx"}', 'https://ngrx.io', 'ngrx'),
   ('redux', 'Redux', '{"redux"}', 'https://redux.js.org', 'redux'),
   ('rxjs', 'RxJS', '{"rxjs","rx js"}', 'https://rxjs-dev.firebaseapp.com', 'rxjs'),
-  ('vuex', 'Vuex', '{"vuex"}', 'https://vuex.vuejs.org', 'vue'),
+  ('vuex', 'Vuex', '{"vuex"}', 'https://vuex.vuejs.org', 'vuex'),
   ('grunt', 'Grunt', '{"grunt"}', 'https://gruntjs.com', 'grunt'),
   ('gulp', 'gulp', '{"gulp"}', 'https://gulpjs.com', 'gulp'),
   ('ava', 'AVA', '{"ava"}', 'https://github.com/avajs/ava', 'ava'),

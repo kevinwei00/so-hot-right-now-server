@@ -63,7 +63,7 @@ APIRouter.route('/categories/:category_id/tools/:tool_id/logo')
   .get((req, res) => {
     return res
       .status(200)
-      .sendFile(`/logos/${req.params.tool_id}.png`, { root: process.cwd() });
+      .sendFile(`/logos/${res.tool.logo}.png`, { root: process.cwd() });
   });
 
 // returns number of job listings matching the supplied keywords using the Indeed API
